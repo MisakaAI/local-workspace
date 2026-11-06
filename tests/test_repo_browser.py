@@ -110,6 +110,37 @@ class BrowserTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertFalse(portal.valid_existing_name(name))
 
+    def test_archive_hides_from_default_list_and_can_be_restored(self):
+        marker = self.bare / portal.ARCHIVE_MARKER
+        self.assertIn('project.git', self.client.get('/').get_data(as_text=True))
+        self.assertNotIn('project.git', self.client.get('/?archived=1').get_data(as_text=True))
+        self.assertEqual(self.client.post('/archive/project.git', data={'archived': '1'}).status_code, 403)
+        self.assertFalse(marker.exists())
+        self.assertEqual(self.client.post('/archive/project.git', data={
+            'csrf': portal.CSRF_TOKEN, 'archived': 'invalid',
+        }).status_code, 400)
+
+        archived = self.client.post('/archive/project.git', data={
+            'csrf': portal.CSRF_TOKEN, 'archived': '1',
+        })
+        self.assertEqual(archived.status_code, 303)
+        self.assertIn('archived=1', archived.location)
+        self.assertTrue(marker.exists())
+        self.assertNotIn('project.git', self.client.get('/').get_data(as_text=True))
+        self.assertIn('project.git', self.client.get('/?archived=1').get_data(as_text=True))
+        detail = self.client.get('/repo/project.git')
+        self.assertEqual(detail.status_code, 200)
+        self.assertIn('取消存档', detail.get_data(as_text=True))
+
+        restored = self.client.post('/archive/project.git', data={
+            'csrf': portal.CSRF_TOKEN, 'archived': '0',
+        })
+        self.assertEqual(restored.status_code, 303)
+        self.assertEqual(restored.location, '/')
+        self.assertFalse(marker.exists())
+        self.assertIn('project.git', self.client.get('/').get_data(as_text=True))
+        self.assertNotIn('project.git', self.client.get('/?archived=1').get_data(as_text=True))
+
     def test_raw_only_for_previewable_files_and_download_all_files(self):
         large = b'\x00\xff' + b'x' * (1024 * 1024)
         (self.work / 'src' / 'large.bin').write_bytes(large)

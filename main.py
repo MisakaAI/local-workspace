@@ -34,6 +34,7 @@ PORT = int(os.environ.get("GIT_PORT", "43827"))
 NAME_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}\Z")
 WINDOWS_RESERVED_NAMES = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
 CSRF_TOKEN = secrets.token_urlsafe(32)
+ARCHIVE_MARKER = ".local-workspace-archived"
 app = Flask(__name__)
 activity = Contributions(
     ROOT, os.environ.get("GIT_ACTIVITY_CACHE", default_cache_dir()),
@@ -66,6 +67,10 @@ def clean_description(raw: str) -> str:
 def clone_paths(repo_name: str) -> tuple[str, str]:
     """路径使用 ntpath / posixpath，与程序当前 OS 无关。"""
     return ntpath.join(WINDOWS_ROOT, repo_name), posixpath.join(LINUX_ROOT, repo_name)
+
+
+def is_archived(repo: Path) -> bool:
+    return (repo / ARCHIVE_MARKER).exists()
 
 
 def check_root() -> None:
@@ -114,9 +119,11 @@ def check_name():
 @app.get("/")
 def index():
     check_root()
+    archived = request.args.get("archived") == "1"
     repos = []
     for path in sorted(ROOT.iterdir(), key=lambda p: p.name.casefold()):
-        if not path.name.lower().endswith(".git") or not is_bare_repo(path):
+        if (not path.name.lower().endswith(".git") or not is_bare_repo(path)
+                or is_archived(path) != archived):
             continue
         desc_file = path / "description"
         try:
@@ -128,7 +135,7 @@ def index():
         windows, linux = clone_paths(path.name)
         repos.append({"name": path.name, "description": desc, "windows": windows, "linux": linux})
     return render_template(
-        "index.html", repos=repos, csrf=CSRF_TOKEN, is_windows=IS_WINDOWS,
+        "index.html", repos=repos, archived=archived, csrf=CSRF_TOKEN, is_windows=IS_WINDOWS,
     )
 
 
@@ -153,6 +160,7 @@ def browser_context(name: str) -> dict:
         description = ""
     windows, linux = clone_paths(name)
     return {"name": name, "repo": repo, "description": description,
+            "archived": is_archived(repo),
             "refs": ref_items, "ref": ref, "oid": oid, "csrf": CSRF_TOKEN,
             "clone_path": windows if IS_WINDOWS else linux}
 
@@ -346,6 +354,26 @@ def describe(name: str):
     if request.accept_mimetypes.best == "application/json":
         return {"description": description}
     return redirect(url_for("repo_tree", name=name), code=303)
+
+
+@app.post("/archive/<name>")
+def archive(name: str):
+    require_csrf()
+    check_root()
+    if not valid_existing_name(name):
+        abort(404)
+    repo = ROOT / name
+    if not is_bare_repo(repo):
+        abort(404)
+    archived = request.form.get("archived")
+    if archived not in ("0", "1"):
+        abort(400, "存档状态无效")
+    marker = repo / ARCHIVE_MARKER
+    if archived == "1":
+        marker.touch(exist_ok=True)
+        return redirect(url_for("index", archived=1), code=303)
+    marker.unlink(missing_ok=True)
+    return redirect(url_for("index"), code=303)
 
 
 if __name__ == "__main__":

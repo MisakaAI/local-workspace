@@ -123,6 +123,10 @@
 .repository-description-row .description-edit { flex: none; color: var(--muted); }
 .repository-description-row .description-edit .ui-icon { margin-right: 0; }
 .repository-description-row .description-edit:hover { color: var(--accent); }
+.repository-archive-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin: -10px 0 14px; }
+.archive-badge { color: var(--muted); font-size: 13px; }
+.archive-action { padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
+.archive-action:hover { background: var(--surface-soft); }
 .repository-description-form .dialog-actions { margin-top: 20px; }
 .ref-picker .el-select { width: min(60vw, 320px); }
 .repository-identity h1 a { display: block; overflow: hidden; text-overflow: ellipsis; color: inherit; }

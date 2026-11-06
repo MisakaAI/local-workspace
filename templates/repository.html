@@ -40,6 +40,10 @@
         </form>
       </el-dialog>
     </div>
+    <div class="repository-archive-actions">
+      {% if archived %}<span class="archive-badge">已存档</span>{% endif %}
+      <form action="{{ url_for('archive', name=name) }}" method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="archived" value="{{ '0' if archived else '1' }}"><button class="archive-action" type="submit">{{ '取消存档' if archived else '存档' }}</button></form>
+    </div>
     <nav class="repository-tabs" aria-label="仓库导航">
       <a class="{{ 'active' if view in ('tree', 'blob') else '' }}" href="{{ url_for('repo_tree', name=name, ref=ref) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23 12L15.9289 19.0711L14.5147 17.6569L20.1716 12L14.5147 6.34317L15.9289 4.92896L23 12ZM3.82843 12L9.48528 17.6569L8.07107 19.0711L1 12L8.07107 4.92896L9.48528 6.34317L3.82843 12Z"/></svg>代码</a>
       <a class="{{ 'active' if view in ('commits', 'commit') else '' }}" href="{{ url_for('repo_commits', name=name, ref=ref) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.874 13C15.4299 14.7252 13.8638 16 12 16C10.1362 16 8.57006 14.7252 8.12602 13H3V11H8.12602C8.57006 9.27477 10.1362 8 12 8C13.8638 8 15.4299 9.27477 15.874 11H21V13H15.874ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"/></svg>提交历史</a>
