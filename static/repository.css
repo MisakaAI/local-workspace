@@ -91,7 +91,8 @@
 .repository-tabs a { border-radius: 8px 8px 0 0; }
 .repository-tabs a.active { border-bottom-color: var(--accent); color: var(--ink); background: var(--surface); }
 .repository-page .repository-tabs a:hover, :root[data-theme="dark"] .repository-page .repository-tabs a:hover { background: transparent; }
-.repository-clone { margin-left: auto; align-self: center; padding-bottom: 6px; }
+.repository-nav-actions { display: flex; align-items: center; gap: 8px; flex: none; margin-left: auto; padding-bottom: 6px; }
+.repository-clone { align-self: center; }
 .repository-tabs .clone-button.el-button { height: 36px; border-color: #12633b; background: #12633b; color: #fff; font-weight: 600; }
 .repository-tabs .clone-button.el-button:hover, .repository-tabs .clone-button.el-button:focus-visible { border-color: #0d4f2e; background: #0d4f2e; color: #fff; }
 .repository-tabs .clone-button.el-button:active { border-color: #093f25; background: #093f25; color: #fff; }
@@ -123,9 +124,9 @@
 .repository-description-row .description-edit { flex: none; color: var(--muted); }
 .repository-description-row .description-edit .ui-icon { margin-right: 0; }
 .repository-description-row .description-edit:hover { color: var(--accent); }
-.repository-archive-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin: -10px 0 14px; }
+.repository-archive-actions { display: flex; align-items: center; gap: 8px; }
 .archive-badge { color: var(--muted); font-size: 13px; }
-.archive-action { padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
+.archive-action { height: 36px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; white-space: nowrap; cursor: pointer; }
 .archive-action:hover { background: var(--surface-soft); }
 .repository-description-form .dialog-actions { margin-top: 20px; }
 .ref-picker .el-select { width: min(60vw, 320px); }

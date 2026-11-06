@@ -31,8 +31,11 @@
   <div v-pre>{% include 'contributions.html' %}</div>
   <section id="repositories" aria-labelledby="repositories-heading" tabindex="-1">
   <div class="repository-list-toolbar">
-    <div><h2 id="repositories-heading">{{ '仓库存档' if archived else '仓库列表' }} <span class="count-badge">{{ repos|length }}</span></h2><a class="archive-list-link" href="{{ url_for('index') if archived else url_for('index', archived=1) }}#repositories">{{ '返回仓库列表' if archived else '查看存档' }}</a></div>
-    <el-input class="repo-search" v-model="search" placeholder="搜索仓库名称或描述" clearable aria-label="搜索仓库名称或描述" @keydown.esc="search = ''"><template #prefix><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></template></el-input>
+    <h2 id="repositories-heading">{{ '仓库存档' if archived else '仓库列表' }} <span class="count-badge">{{ repos|length }}</span></h2>
+    <div class="repository-list-controls">
+      <a class="archive-view-button" href="{{ url_for('index') if archived else url_for('index', archived=1) }}">{{ '返回' if archived else '已存档' }}</a>
+      <el-input class="repo-search" v-model="search" placeholder="搜索仓库名称或描述" clearable aria-label="搜索仓库名称或描述" @keydown.esc="search = ''"><template #prefix><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></template></el-input>
+    </div>
   </div>
   <p class="search-status muted" v-if="search.trim()" role="status" v-text="'找到 ' + visibleCount + ' 个仓库'"></p>
   <div class="repo-grid">
@@ -50,7 +53,7 @@
       </div>
     </section>
   {% else %}
-    {% if archived %}<div class="repo-empty"><strong>暂无存档仓库</strong><p>可在仓库详情页将仓库标记为存档。</p><a class="archive-list-link" href="{{ url_for('index') }}#repositories">返回仓库列表</a></div>
+    {% if archived %}<div class="repo-empty"><strong>暂无存档仓库</strong><p>可在仓库详情页将仓库标记为存档。</p></div>
     {% else %}<div class="repo-empty"><strong>暂无仓库</strong><p>创建仓库，或查看已存档的仓库。</p><el-button type="primary" @click="openCreate">创建仓库</el-button></div>{% endif %}
   {% endfor %}
   </div>
