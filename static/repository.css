@@ -120,12 +120,12 @@
 }
 
 .repository-description-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 22px; }
+.repository-archive-alert.el-alert { justify-content: center; margin-bottom: 20px; }
+.repository-archive-alert .el-alert__content { text-align: center; }
 .repository-description-row .repository-description { margin: 0; padding: 5px 0; overflow-wrap: anywhere; min-width: 0; }
 .repository-description-row .description-edit { flex: none; color: var(--muted); }
 .repository-description-row .description-edit .ui-icon { margin-right: 0; }
 .repository-description-row .description-edit:hover { color: var(--accent); }
-.repository-archive-actions { display: flex; align-items: center; gap: 8px; }
-.archive-badge { color: var(--muted); font-size: 13px; }
 .archive-action { height: 36px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; white-space: nowrap; cursor: pointer; }
 .archive-action:hover { background: var(--surface-soft); }
 .repository-description-form .dialog-actions { margin-top: 20px; }
