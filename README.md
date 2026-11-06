@@ -9,11 +9,32 @@
 
 ## 快速开始
 
-需要 Python 3.9+ 和 Git。将 `YOUR_REPOSITORY_URL` 换成实际仓库地址，再安装依赖：
+需要 Python 3.9+ 和 Git。先用以下任一方法获取项目代码。
+
+**方法一：克隆到新目录**
 
 ```sh
-git clone YOUR_REPOSITORY_URL local-workspace
+git clone https://github.com/MisakaAI/local-workspace.git local-workspace
 cd local-workspace
+```
+
+**方法二：在已有文件的目录中初始化并关联远程**
+
+在该目录中执行（以下以远端分支 `main` 为例；  
+如果远端默认分支是 `master`，将命令中的 `main` 都改为 `master`）：
+
+```sh
+git init
+git remote add origin https://github.com/MisakaAI/local-workspace.git
+git fetch origin
+git checkout -b main origin/main
+```
+
+这会在当前目录创建 `.git`，获取远端内容并检出到当前目录。如果已有同名文件，检出可能因冲突而失败；请先确认或备份这些文件。
+
+获取项目代码后，在项目目录中安装依赖：
+
+```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 ```
