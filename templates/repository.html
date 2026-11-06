@@ -25,7 +25,7 @@
   </header>
   <main class="repository-main">
     <div id="repository-description-editor" v-cloak>
-      {% if archived %}<el-alert class="repository-archive-alert" title="已存档" type="warning" :closable="false" show-icon></el-alert>{% endif %}
+      {% if archived %}<el-alert class="repository-archive-alert" title="此仓库已存档，现为只读状态。" type="warning" :closable="false" show-icon></el-alert>{% endif %}
       <div class="repository-description-row">
         <p class="repository-description" v-text="description || '暂无说明'"></p>
         <el-button text class="description-edit" aria-label="修改仓库说明" title="修改仓库说明" @click="openEditor"><svg class="ui-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.41421 15.89L16.5563 5.74785L15.1421 4.33363L5 14.4758V15.89H6.41421ZM7.24264 17.89H3V13.6473L14.435 2.21231C14.8256 1.82179 15.4587 1.82179 15.8492 2.21231L18.6777 5.04074C19.0682 5.43126 19.0682 6.06443 18.6777 6.45495L7.24264 17.89ZM3 19.89H21V21.89H3V19.89Z"></path></svg></el-button>
@@ -45,7 +45,7 @@
       <a class="{{ 'active' if view in ('tree', 'blob') else '' }}" href="{{ url_for('repo_tree', name=name, ref=ref) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23 12L15.9289 19.0711L14.5147 17.6569L20.1716 12L14.5147 6.34317L15.9289 4.92896L23 12ZM3.82843 12L9.48528 17.6569L8.07107 19.0711L1 12L8.07107 4.92896L9.48528 6.34317L3.82843 12Z"/></svg>代码</a>
       <a class="{{ 'active' if view in ('commits', 'commit') else '' }}" href="{{ url_for('repo_commits', name=name, ref=ref) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.874 13C15.4299 14.7252 13.8638 16 12 16C10.1362 16 8.57006 14.7252 8.12602 13H3V11H8.12602C8.57006 9.27477 10.1362 8 12 8C13.8638 8 15.4299 9.27477 15.874 11H21V13H15.874ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"/></svg>提交历史</a>
       <div class="repository-nav-actions">
-        <form action="{{ url_for('archive', name=name) }}" method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="archived" value="{{ '0' if archived else '1' }}"><button class="archive-action" type="submit">{{ '取消存档' if archived else '存档' }}</button></form>
+        <form action="{{ url_for('archive', name=name) }}" method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="archived" value="{{ '0' if archived else '1' }}"><input type="hidden" name="next" value="{{ request.full_path }}"><button class="archive-action" type="submit">{{ '取消存档' if archived else '存档' }}</button></form>
         <div id="repository-clone" class="repository-clone" v-cloak><el-button class="clone-button" aria-label="复制 {{ name[:-4] }} 的 Clone 地址" @click="copyCloneAddress"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 4V2H17V4H20.0066C20.5552 4 21 4.44495 21 4.9934V21.0066C21 21.5552 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5551 3 21.0066V4.9934C3 4.44476 3.44495 4 3.9934 4H7ZM7 6H5V20H19V6H17V8H7V6ZM9 4V6H15V4H9Z"/></svg>Clone</el-button></div>
       </div>
     </nav>

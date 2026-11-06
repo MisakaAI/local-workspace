@@ -19,6 +19,7 @@ import secrets
 import shutil
 import subprocess
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from flask import Flask, Response, abort, redirect, render_template, request, url_for
 from contributions import Contributions, default_cache_dir
@@ -368,12 +369,18 @@ def archive(name: str):
     archived = request.form.get("archived")
     if archived not in ("0", "1"):
         abort(400, "存档状态无效")
+    next_url = request.form.get("next", "")
+    parsed_next = urlsplit(next_url)
+    repo_url = url_for("repo_tree", name=name)
+    if (parsed_next.scheme or parsed_next.netloc or parsed_next.fragment
+            or not (parsed_next.path == repo_url or parsed_next.path.startswith(repo_url + "/"))):
+        next_url = repo_url
     marker = repo / ARCHIVE_MARKER
     if archived == "1":
         marker.touch(exist_ok=True)
-        return redirect(url_for("index", archived=1), code=303)
-    marker.unlink(missing_ok=True)
-    return redirect(url_for("index"), code=303)
+    else:
+        marker.unlink(missing_ok=True)
+    return redirect(next_url, code=303)
 
 
 if __name__ == "__main__":

@@ -120,26 +120,30 @@ class BrowserTests(unittest.TestCase):
             'csrf': portal.CSRF_TOKEN, 'archived': 'invalid',
         }).status_code, 400)
 
+        current_page = '/repo/project.git/commits?ref=refs/heads/main'
         archived = self.client.post('/archive/project.git', data={
-            'csrf': portal.CSRF_TOKEN, 'archived': '1',
+            'csrf': portal.CSRF_TOKEN, 'archived': '1', 'next': current_page,
         })
         self.assertEqual(archived.status_code, 303)
-        self.assertIn('archived=1', archived.location)
+        self.assertEqual(archived.location, current_page)
         self.assertTrue(marker.exists())
         self.assertNotIn('project.git', self.client.get('/').get_data(as_text=True))
         self.assertIn('project.git', self.client.get('/?archived=1').get_data(as_text=True))
         detail = self.client.get('/repo/project.git')
         self.assertEqual(detail.status_code, 200)
         self.assertIn('取消存档', detail.get_data(as_text=True))
+        self.assertIn('此仓库已存档，现为只读状态。', detail.get_data(as_text=True))
+        self.assertIn('name="next" value="/repo/project.git', detail.get_data(as_text=True))
 
         restored = self.client.post('/archive/project.git', data={
-            'csrf': portal.CSRF_TOKEN, 'archived': '0',
+            'csrf': portal.CSRF_TOKEN, 'archived': '0', 'next': current_page,
         })
         self.assertEqual(restored.status_code, 303)
-        self.assertEqual(restored.location, '/')
+        self.assertEqual(restored.location, current_page)
         self.assertFalse(marker.exists())
         self.assertIn('project.git', self.client.get('/').get_data(as_text=True))
         self.assertNotIn('project.git', self.client.get('/?archived=1').get_data(as_text=True))
+        self.assertNotIn('repository-archive-alert', self.client.get('/repo/project.git').get_data(as_text=True))
 
     def test_raw_only_for_previewable_files_and_download_all_files(self):
         large = b'\x00\xff' + b'x' * (1024 * 1024)
