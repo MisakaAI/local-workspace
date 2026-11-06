@@ -1,0 +1,40 @@
+# Local bare repositories managed by this app
+*.git
+
+# Python environments and generated files
+__pycache__/
+.venv/
+venv/
+env/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Test and analysis output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+
+# Editor and operating system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Repository exports and backups
+*.tar
+*.tar.*
+*.zip
+*.rar
+*.7z

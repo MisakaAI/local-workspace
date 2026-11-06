@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ name[:-4] }} · 本地仓库管理</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+  <link rel="stylesheet" href="{{ url_for('static', filename='js/element-plus-2.14.7.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='js/github-markdown-5.9.0.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='js/highlight-github-11.12.0.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='portal.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='repository.css') }}">
+  <script src="{{ url_for('static', filename='theme.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='js/vue-3.5.45.global.prod.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='js/element-plus-2.14.7.min.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='js/markdown-it-14.2.0.min.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='js/dompurify-3.4.10.min.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='js/highlight-11.12.0.min.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='repository.js') }}"></script>
+</head>
+<body class="repository-page">
+  <header class="topbar repository-topbar">
+    <div class="repository-identity"><a href="{{ url_for('index') }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13 21V23.5L10 21.5L7 23.5V21H6.5C4.567 21 3 19.433 3 17.5V5C3 3.34315 4.34315 2 6 2H20C20.5523 2 21 2.44772 21 3V20C21 20.5523 20.5523 21 20 21H13ZM13 19H19V16H6.5C5.67157 16 5 16.6716 5 17.5C5 18.3284 5.67157 19 6.5 19H7V17H13V19ZM19 14V4H6V14.0354C6.1633 14.0121 6.33024 14 6.5 14H19ZM7 5H9V7H7V5ZM7 8H9V10H7V8ZM7 11H9V13H7V11Z"/></svg>仓库列表</a><span>/</span><h1><a href="{{ url_for('repo_tree', name=name, ref=ref) }}">{{ name[:-4] }}</a></h1></div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换主题"><svg class="theme-icon-light" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z"/></svg><svg class="theme-icon-dark" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z"/></svg></button>
+  </header>
+  <main class="repository-main">
+    <div id="repository-description-editor" v-cloak>
+      <div class="repository-description-row">
+        <p class="repository-description" v-text="description || '暂无说明'"></p>
+        <el-button text class="description-edit" aria-label="修改仓库说明" title="修改仓库说明" @click="openEditor"><svg class="ui-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.41421 15.89L16.5563 5.74785L15.1421 4.33363L5 14.4758V15.89H6.41421ZM7.24264 17.89H3V13.6473L14.435 2.21231C14.8256 1.82179 15.4587 1.82179 15.8492 2.21231L18.6777 5.04074C19.0682 5.43126 19.0682 6.06443 18.6777 6.45495L7.24264 17.89ZM3 19.89H21V21.89H3V19.89Z"></path></svg></el-button>
+      </div>
+      <el-dialog v-model="visible" title="修改仓库说明" width="480px" :close-on-click-modal="!saving" :close-on-press-escape="!saving" :show-close="!saving">
+        <form class="repository-description-form" @submit.prevent="saveDescription">
+          <label for="repository-description-input">仓库说明</label>
+          <el-input id="repository-description-input" v-model="draft" type="textarea" :rows="3" maxlength="300" show-word-limit :readonly="saving" placeholder="描述这个仓库的用途"></el-input>
+          <div class="dialog-actions">
+            <el-button :disabled="saving" @click="visible = false">取消</el-button>
+            <el-button type="primary" native-type="submit" :loading="saving">保存</el-button>
+          </div>
+        </form>
+      </el-dialog>
+    </div>
+    <nav class="repository-tabs" aria-label="仓库导航">
+      <a class="{{ 'active' if view in ('tree', 'blob') else '' }}" href="{{ url_for('repo_tree', name=name, ref=ref) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23 12L15.9289 19.0711L14.5147 17.6569L20.1716 12L14.5147 6.34317L15.9289 4.92896L23 12ZM3.82843 12L9.48528 17.6569L8.07107 19.0711L1 12L8.07107 4.92896L9.48528 6.34317L3.82843 12Z"/></svg>代码</a>
+      <a class="{{ 'active' if view in ('commits', 'commit') else '' }}" href="{{ url_for('repo_commits', name=name, ref=ref) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.874 13C15.4299 14.7252 13.8638 16 12 16C10.1362 16 8.57006 14.7252 8.12602 13H3V11H8.12602C8.57006 9.27477 10.1362 8 12 8C13.8638 8 15.4299 9.27477 15.874 11H21V13H15.874ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"/></svg>提交历史</a>
+      <div id="repository-clone" class="repository-clone" v-cloak><el-button class="clone-button" aria-label="复制 {{ name[:-4] }} 的 Clone 地址" @click="copyCloneAddress"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 4V2H17V4H20.0066C20.5552 4 21 4.44495 21 4.9934V21.0066C21 21.5552 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5551 3 21.0066V4.9934C3 4.44476 3.44495 4 3.9934 4H7ZM7 6H5V20H19V6H17V8H7V6ZM9 4V6H15V4H9Z"/></svg>Clone</el-button></div>
+    </nav>
+    <div class="repository-toolbar">
+      <div id="repository-ref-picker" class="ref-picker" v-cloak><span class="ref-label"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.10508 15.2101C8.21506 15.6501 9 16.7334 9 18C9 19.6569 7.65685 21 6 21C4.34315 21 3 19.6569 3 18C3 16.6938 3.83481 15.5825 5 15.1707V8.82929C3.83481 8.41746 3 7.30622 3 6C3 4.34315 4.34315 3 6 3C7.65685 3 9 4.34315 9 6C9 7.30622 8.16519 8.41746 7 8.82929V11.9996C7.83566 11.3719 8.87439 11 10 11H14C15.3835 11 16.5482 10.0635 16.8949 8.78991C15.7849 8.34988 15 7.26661 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6C21 7.3332 20.1303 8.46329 18.9274 8.85392C18.5222 11.2085 16.4703 13 14 13H10C8.61653 13 7.45179 13.9365 7.10508 15.2101ZM6 17C5.44772 17 5 17.4477 5 18C5 18.5523 5.44772 19 6 19C6.55228 19 7 18.5523 7 18C7 17.4477 6.55228 17 6 17ZM6 5C5.44772 5 5 5.44772 5 6C5 6.55228 5.44772 7 6 7C6.55228 7 7 6.55228 7 6C7 5.44772 6.55228 5 6 5ZM18 5C17.4477 5 17 5.44772 17 6C17 6.55228 17.4477 7 18 7C18.5523 7 19 6.55228 19 6C19 5.44772 18.5523 5 18 5Z"/></svg>分支 / Tag</span>
+        <el-select id="ref-select" v-model="selectedRef" filterable :disabled="!refs.length" placeholder="暂无分支" aria-label="分支或 Tag" @change="changeRef">
+          <el-option v-for="item in refs" :key="item.value" :value="item.value" :label="item.kind + ' · ' + item.label"></el-option>
+        </el-select>
+      </div>
+      {% if oid %}<span class="current-commit" title="{{ oid }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.874 13C15.4299 14.7252 13.8638 16 12 16C10.1362 16 8.57006 14.7252 8.12602 13H3V11H8.12602C8.57006 9.27477 10.1362 8 12 8C13.8638 8 15.4299 9.27477 15.874 11H21V13H15.874ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"/></svg>{{ oid[:7] }}</span>{% endif %}
+    </div>
+
+    {% if view in ('tree', 'blob') and path %}
+      <nav class="breadcrumbs" aria-label="文件路径">
+        {% set crumbs = namespace(value='') %}
+        {% for part in path.split('/') if part %}
+          {% set crumbs.value = crumbs.value ~ ('/' if crumbs.value else '') ~ part %}
+          {% if not loop.first %}<span>/</span>{% endif %}
+          {% if loop.last and view == 'blob' %}<strong>{{ part }}</strong>
+          {% else %}<a href="{{ url_for('repo_tree', name=name, subpath=crumbs.value, ref=ref) }}">{{ part }}</a>{% endif %}
+        {% endfor %}
+      </nav>
+    {% elif path %}
+      <nav class="breadcrumbs" aria-label="文件路径">{{ path }}</nav>
+    {% endif %}
+
+    {% if view == 'tree' %}
+      {% if history %}<div class="latest-commit"><span class="commit-avatar">{{ history[0].author[:1] }}</span><strong>{{ history[0].author }}</strong><a href="{{ url_for('repo_commit', name=name, commit_oid=history[0].oid, ref=ref) }}">{{ history[0].subject }}</a><span class="commit-date">{{ history[0].date[:10] }}</span><a class="history-link" href="{{ url_for('repo_commits', name=name, ref=ref, path=path) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12H4C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C9.25022 4 6.82447 5.38734 5.38451 7.50024L8 7.5V9.5H2V3.5H4L3.99989 5.99918C5.82434 3.57075 8.72873 2 12 2ZM13 7L12.9998 11.585L16.2426 14.8284L14.8284 16.2426L10.9998 12.413L11 7H13Z"/></svg>历史记录</a></div>{% endif %}
+      <div class="file-list">
+        {% if path %}<a class="file-row parent-row" href="{{ url_for('repo_tree', name=name, subpath=path.rsplit('/', 1)[0], ref=ref) if '/' in path else url_for('repo_tree', name=name, ref=ref) }}"><span class="file-icon"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"/></svg></span><span>..</span></a>{% endif %}
+        {% for entry in entries %}
+          <a class="file-row" href="{{ url_for('repo_tree', name=name, subpath=entry.path, ref=ref) if entry.type == 'tree' else url_for('repo_blob', name=name, subpath=entry.path, ref=ref) }}">
+            <span class="file-icon {{ 'folder' if entry.type == 'tree' else '' }}" aria-hidden="true">{% if entry.type == 'tree' %}<svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.4142 5H21C21.5523 5 22 5.44772 22 6V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H10.4142L12.4142 5Z"/></svg>{% else %}<svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9 2.00318V2H19.9978C20.5513 2 21 2.45531 21 2.9918V21.0082C21 21.556 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5501 3 20.9932V8L9 2.00318ZM5.82918 8H9V4.83086L5.82918 8ZM11 4V9C11 9.55228 10.5523 10 10 10H5V20H19V4H11Z"/></svg>{% endif %}</span>
+            <span class="file-name">{{ entry.name }}</span>
+            <span class="file-size">{{ '文件夹' if entry.type == 'tree' else ('%.1f KB'|format(entry.size / 1024) if entry.size is not none and entry.size >= 1024 else (entry.size|string ~ ' B' if entry.size is not none else '')) }}</span>
+          </a>
+        {% else %}<div class="empty-state">{{ '此文件夹为空' if oid else '此仓库还没有提交' }}</div>{% endfor %}
+      </div>
+      {% if readme is not none %}<section class="readme-box"><div class="box-title"><span class="box-heading"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13 21V23H11V21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H9C10.1947 3 11.2671 3.52375 12 4.35418C12.7329 3.52375 13.8053 3 15 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H13ZM20 19V5H15C13.8954 5 13 5.89543 13 7V19H20ZM11 19V7C11 5.89543 10.1046 5 9 5H4V19H11Z"/></svg>README.md</span></div><article id="readme-content" class="markdown-body readme-links" data-repo-base="{{ url_for('repo_tree', name=name) }}" data-markdown-dir="{{ path }}" data-ref="{{ ref or '' }}"></article></section><script id="readme-data" type="application/json">{{ readme|tojson }}</script>{% endif %}
+    {% elif view == 'blob' %}
+      <section class="source-box"><div class="box-title"><span class="source-name">{{ path.rsplit('/', 1)[-1] }}</span><span class="source-size">{{ size }} B</span><div class="source-actions">{% if content is not none and path.lower().endswith('.md') %}<div id="markdown-view-picker" class="markdown-view-picker" v-cloak><el-radio-group v-model="markdownView" fill="#fff" text-color="#1f2328" aria-label="Markdown 查看方式" @change="changeMarkdownView"><el-radio-button label="预览" value="preview"></el-radio-button><el-radio-button label="源码" value="source"></el-radio-button></el-radio-group></div>{% endif %}<a href="{{ url_for('repo_commits', name=name, ref=ref, path=path) }}">查看文件历史</a>{% if content is not none %}<a href="{{ url_for('repo_raw', name=name, subpath=path, ref=ref) }}">Raw</a>{% endif %}<a href="{{ url_for('repo_download', name=name, subpath=path, ref=ref) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 19H21V21H3V19ZM13 13.1716L19.0711 7.1005L20.4853 8.51472L12 17L3.51472 8.51472L4.92893 7.1005L11 13.1716V2H13V13.1716Z"/></svg>下载</a></div></div>
+        {% if content is none %}<div class="empty-state">此文件是二进制文件或超过 1 MB，无法预览。</div>
+        {% elif path.lower().endswith('.md') %}<article id="readme-content" class="markdown-body{{ ' readme-links' if path.rsplit('/', 1)[-1].lower() == 'readme.md' else '' }}" data-repo-base="{{ url_for('repo_tree', name=name) }}" data-markdown-dir="{{ path.rsplit('/', 1)[0] if '/' in path else '' }}" data-ref="{{ ref or '' }}"></article><pre id="markdown-source" class="source-code" hidden><code>{{ content }}</code></pre><script id="readme-data" type="application/json">{{ content|tojson }}</script>
+        {% else %}<pre class="source-code"><code>{{ content }}</code></pre>{% endif %}
+      </section>
+    {% elif view == 'commits' %}
+      <h2 class="view-heading">{{ path ~ ' · ' if path else '' }}提交历史</h2>
+      <div class="commit-list">
+        {% for item in history %}<a class="commit-row" href="{{ url_for('repo_commit', name=name, commit_oid=item.oid, ref=ref) }}"><span class="commit-avatar">{{ item.author[:1] }}</span><span class="commit-text"><strong>{{ item.subject }}</strong><small>{{ item.author }} · {{ item.date[:19].replace('T', ' ') }}</small></span><code>{{ item.oid[:7] }}</code></a>
+        {% else %}<div class="empty-state">暂无提交记录</div>{% endfor %}
+      </div>
+      <nav class="history-pages" aria-label="提交历史翻页">
+        {% if page > 1 %}<a href="{{ url_for('repo_commits', name=name, ref=ref, path=path, page=page - 1) }}"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"/></svg>上一页</a>{% endif %}
+        <span>第 {{ page }} 页</span>
+        {% if has_more %}<a href="{{ url_for('repo_commits', name=name, ref=ref, path=path, page=page + 1) }}">下一页<svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"/></svg></a>{% endif %}
+      </nav>
+    {% elif view == 'commit' %}
+      <h2 class="view-heading commit-message">{{ commit.message.split('\n', 1)[0] }}</h2>
+      <div class="commit-meta"><strong>{{ commit.author }}</strong> · {{ commit.date[:19].replace('T', ' ') }} · <code>{{ commit.oid }}</code></div>
+      {% if '\n' in commit.message.strip() %}<pre class="commit-body">{{ commit.message }}</pre>{% endif %}
+      <section class="diff-box"><div class="box-title">文件修改 Diff</div>
+        {% if diff_truncated %}<div class="empty-state">此提交的 Diff 超过 2 MB，无法预览。</div>
+        {% elif diff %}<pre class="diff-code">{%- for line in diff %}<span class="diff-line {{ line.kind }}">{{ line.text }}</span>{%- endfor %}</pre>
+        {% else %}<div class="empty-state">此提交没有可显示的文本差异。</div>{% endif %}
+      </section>
+    {% endif %}
+  </main>
+<script id="repository-config" type="application/json">{{ {'description': description, 'describeUrl': url_for('describe', name=name), 'csrf': csrf, 'refs': refs, 'ref': ref, 'treeUrl': url_for('repo_tree', name=name), 'clonePath': clone_path}|tojson }}</script>
+</body>
+</html>

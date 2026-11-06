@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>本地仓库管理 · LOCAL WORKSPACE</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+  <link rel="stylesheet" href="{{ url_for('static', filename='js/element-plus-2.14.7.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='portal.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='contributions.css') }}">
+  <script src="{{ url_for('static', filename='theme.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/vue-3.5.45.global.prod.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/element-plus-2.14.7.min.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='portal.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='contributions.js') }}" defer></script>
+</head>
+<body>
+<div id="portal" v-cloak>
+  <a class="skip-link" href="#repositories">跳转到仓库列表</a>
+  <header class="topbar">
+    <div class="portal-brand"><img class="brand-mark" src="{{ url_for('static', filename='local-git-mark.svg') }}" alt=""><div><span class="eyebrow">LOCAL WORKSPACE</span><h1>本地仓库管理</h1></div></div>
+    <div class="topbar-actions">
+      <el-button id="theme-toggle" class="theme-toggle" text aria-label="切换主题">
+        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z"></path></svg>
+        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z"></path></svg>
+      </el-button>
+      <el-button id="open-create" type="primary" @click="openCreate"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"/></svg>创建仓库</el-button>
+    </div>
+  </header>
+  <main>
+  <div v-pre>{% include 'contributions.html' %}</div>
+  <section id="repositories" aria-labelledby="repositories-heading" tabindex="-1">
+  <div class="repository-list-toolbar">
+    <div><h2 id="repositories-heading">仓库列表 <span class="count-badge">{{ repos|length }}</span></h2></div>
+    <el-input class="repo-search" v-model="search" placeholder="搜索仓库名称或描述" clearable aria-label="搜索仓库名称或描述" @keydown.esc="search = ''"><template #prefix><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></template></el-input>
+  </div>
+  <p class="search-status muted" v-if="search.trim()" role="status" v-text="'找到 ' + visibleCount + ' 个仓库'"></p>
+  <div class="repo-grid">
+  {% for repo in repos %}
+    <section v-show="matchesRepo({{ loop.index0 }})" class="panel repo" data-path="{{ repo.windows if is_windows else repo.linux }}" data-name="{{ repo.name[:-4] }}" data-description="{{ repo.description }}">
+      <div class="repo-line">
+        <div class="repo-title" v-pre>
+          <svg class="repo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13 21V23.5L10 21.5L7 23.5V21H6.5C4.567 21 3 19.433 3 17.5V5C3 3.34315 4.34315 2 6 2H20C20.5523 2 21 2.44772 21 3V20C21 20.5523 20.5523 21 20 21H13ZM13 19H19V16H6.5C5.67157 16 5 16.6716 5 17.5C5 18.3284 5.67157 19 6.5 19H7V17H13V19ZM19 14V4H6V14.0354C6.1633 14.0121 6.33024 14 6.5 14H19ZM7 5H9V7H7V5ZM7 8H9V10H7V8ZM7 11H9V13H7V11Z"></path></svg>
+          <h3 title="{{ repo.name[:-4] }}"><a class="repo-card-link" href="{{ url_for('repo_tree', name=repo.name) }}">{{ repo.name[:-4] }}</a></h3>
+        </div>
+      </div>
+      <div class="repo-line">
+        <p class="description" v-pre title="{{ repo.description }}">{{ repo.description or '暂无描述' }}</p>
+        <el-button class="copy-command" @click="copyCommand($event)" aria-label="复制 {{ repo.name[:-4] }} 的 git clone 命令"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 4V2H17V4H20.0066C20.5552 4 21 4.44495 21 4.9934V21.0066C21 21.5552 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5551 3 21.0066V4.9934C3 4.44476 3.44495 4 3.9934 4H7ZM7 6H5V20H19V6H17V8H7V6ZM9 4V6H15V4H9Z"/></svg>Clone</el-button>
+      </div>
+    </section>
+  {% else %}
+    <div class="repo-empty"><strong>从第一个仓库开始</strong><p>创建仓库，集中管理你的项目与代码。</p><el-button type="primary" @click="openCreate">创建仓库</el-button></div>
+  {% endfor %}
+  </div>
+
+  <div class="repo-empty" v-if="search.trim() && visibleCount === 0"><strong>没有找到匹配的仓库</strong><p>试试其他名称或描述关键词。</p><el-button @click="search = ''">清空搜索</el-button></div>
+  </section>
+  </main>
+
+  <el-dialog v-model="createVisible" title="创建仓库" width="480px"
+             :close-on-click-modal="!creating" :close-on-press-escape="!creating" :show-close="!creating">
+    <form id="create-form" @submit.prevent="createRepo">
+      <label for="create-name">仓库名称</label>
+      <el-input id="create-name" v-model="name" placeholder="例如 MyProject" maxlength="68"
+                :readonly="creating" required aria-describedby="name-feedback"
+                :aria-invalid="nameState === 'error'" @input="clearNameFeedback" @blur="checkName"></el-input>
+      <p id="name-feedback" :class="nameState" role="status" aria-live="polite" v-text="nameFeedback"></p>
+      <label for="create-description">仓库描述（可选）</label>
+      <el-input id="create-description" v-model="description" placeholder="项目用途" maxlength="300" :readonly="creating"></el-input>
+      <div class="dialog-actions">
+        <el-button :disabled="creating" @click="createVisible = false">取消</el-button>
+        <el-button type="primary" native-type="submit" :loading="creating">创建仓库</el-button>
+      </div>
+    </form>
+  </el-dialog>
+</div>
+<noscript>请启用 JavaScript 以使用仓库管理功能。</noscript>
+<script id="portal-config" type="application/json">{{ {'checkNameUrl': url_for('check_name'), 'createUrl': url_for('create'), 'csrf': csrf}|tojson }}</script>
+</body>
+</html>

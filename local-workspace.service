@@ -1,0 +1,15 @@
+[Unit]
+Description=LOCAL WORKSPACE - 本地仓库管理
+After=network.target
+
+[Service]
+Type=simple
+User=misaka
+WorkingDirectory=/mnt/d/Git
+ExecStart=/mnt/d/Git/.venv/bin/gunicorn --bind 127.0.0.1:43827 --workers 1 --worker-class gthread --threads 4 main:app
+Environment=PYTHONUNBUFFERED=1
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

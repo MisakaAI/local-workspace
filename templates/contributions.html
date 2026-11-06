@@ -1,0 +1,41 @@
+<section class="panel activity" id="activity" aria-label="提交热力图"
+         data-api="{{ url_for('activity_data') }}" data-refresh="{{ url_for('refresh_activity') }}" data-csrf="{{ csrf }}">
+  <div class="activity-toolbar">
+    <div><h2 class="activity-heading">提交活动</h2></div>
+    <div class="activity-controls">
+      <span>时间范围</span>
+      <el-select id="activity-period" v-model="controls.period" aria-label="时间范围" @change="load">
+        <el-option label="最近 365 天" value="recent"></el-option>
+        <el-option v-for="year in controls.years" :key="year" :label="year + ' 年'" :value="String(year)"></el-option>
+      </el-select>
+      <el-button id="activity-refresh" :loading="controls.refreshing" @click="refreshCache"><svg class="ui-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5.46257 4.43262C7.21556 2.91688 9.5007 2 12 2C17.5228 2 22 6.47715 22 12C22 14.1361 21.3302 16.1158 20.1892 17.7406L17 12H20C20 7.58172 16.4183 4 12 4C9.84982 4 7.89777 4.84827 6.46023 6.22842L5.46257 4.43262ZM18.5374 19.5674C16.7844 21.0831 14.4993 22 12 22C6.47715 22 2 17.5228 2 12C2 9.86386 2.66979 7.88416 3.8108 6.25944L7 12H4C4 16.4183 7.58172 20 12 20C14.1502 20 16.1022 19.1517 17.5398 17.7716L18.5374 19.5674Z"/></svg>刷新缓存</el-button>
+    </div>
+  </div>
+  <div class="activity-summary" aria-label="活动统计" aria-live="polite">
+    <div class="activity-summary-item activity-summary-period">
+      <span>统计期间</span><strong id="activity-range">正在加载…</strong>
+    </div>
+    <div class="activity-summary-item">
+      <span>提交</span><strong id="activity-total">—</strong>
+    </div>
+    <div class="activity-summary-item">
+      <span>活跃日</span><strong id="activity-active-days">—</strong>
+    </div>
+    <div class="activity-summary-item">
+      <span>最长连续</span><strong id="activity-longest-streak">—</strong>
+    </div>
+    <div class="activity-summary-item">
+      <span>仓库</span><strong>共 {{ repos|length }} 个</strong>
+    </div>
+  </div>
+  <div class="activity-scroll"><div id="activity-grid" aria-label="每日提交次数"></div></div>
+  <div id="activity-tooltip" class="activity-tooltip" role="tooltip" hidden></div>
+  <div class="activity-footer">
+    <span class="muted" id="activity-status" role="status"></span>
+    <span class="activity-legend" aria-label="颜色等级：0、1–3、4–6、7–9、10 次及以上">少
+      <i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i>多
+    </span>
+  </div>
+  <p id="activity-errors" role="status"></p>
+  <div id="activity-detail" aria-live="polite">点击日期查看各仓库提交分布。</div>
+</section>

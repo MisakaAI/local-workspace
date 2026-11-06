@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Local Git Repository Mark</title>
+  <desc id="desc">An original orange repository folder and dark Git branch graph, with a transparent outer background.</desc>
+  <defs>
+    <linearGradient id="folder" x1="0" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#FFBD68"/>
+      <stop offset="0.48" stop-color="#FF934A"/>
+      <stop offset="1" stop-color="#F15B43"/>
+    </linearGradient>
+  </defs>
+  <path d="M61 79h44c6 0 10 2 14 6l12 13h62c12 0 21 9 21 21v62c0 14-10 24-24 24H65c-14 0-24-10-24-24v-80c0-13 9-22 20-22Z" fill="url(#folder)"/>
+  <g fill="none" stroke="#172135" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M98 170V133c0-8 7-15 15-15h43"/>
+    <path d="M98 133v-14"/>
+  </g>
+  <g fill="#172135">
+    <circle cx="98" cy="171" r="9"/>
+    <circle cx="98" cy="118" r="9"/>
+    <circle cx="158" cy="118" r="9"/>
+  </g>
+</svg>

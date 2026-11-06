@@ -1,0 +1,132 @@
+:root { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; padding: 24px; background: #f5f7fa; color: #1f2937; }
+[v-cloak] { display: none; }
+h1 { margin: 0; font-size: 28px; }
+h2 { margin-top: 29px; font-size: 20px; }
+h3 { margin: 0; font-size: 18px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.topbar-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.ui-icon { display: inline-block; width: 16px; height: 16px; flex: none; vertical-align: -3px; }
+.el-button .ui-icon { margin-right: 6px; }
+.theme-toggle.el-button { width: 32px; height: 32px; padding: 6px; }
+.theme-toggle svg { width: 20px; height: 20px; }
+.theme-icon-dark, :root[data-theme="dark"] .theme-icon-light { display: none; }
+:root[data-theme="dark"] .theme-icon-dark { display: block; }
+.panel { background: #fff; border: 1px solid #e4e7ec; border-radius: 12px; padding: 20px; margin: 14px 0; }
+.repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+.repo { position: relative; margin: 0; padding: 14px 16px; min-width: 0; }
+.repo:hover { box-shadow: 0 2px 12px rgb(31 41 55 / 8%); }
+.repo-card-link { color: #0969da; text-decoration: none; }
+.repo-card-link::after { position: absolute; inset: 0; content: ''; border-radius: 12px; }
+.repo-card-link:focus-visible::after { outline: 2px solid #0969da; outline-offset: 2px; }
+.repo-line { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.repo-line + .repo-line { margin-top: 8px; }
+.repo-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.repo-icon { width: 20px; height: 20px; flex-shrink: 0; color: #667085; }
+.repo h3 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repo .el-button { flex-shrink: 0; }
+.description { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: #667085; }
+.muted { color: #667085; font-size: 13px; }
+.el-dialog { max-width: calc(100% - 32px); }
+.el-dialog__title { overflow-wrap: anywhere; }
+.el-dialog label { display: block; margin-bottom: 8px; }
+.el-dialog .el-input { margin-bottom: 18px; }
+#name-feedback:empty { display: none; }
+#name-feedback { margin: -10px 0 18px; font-size: 13px; color: #667085; }
+#name-feedback.error { color: #b42318; }
+#name-feedback.success { color: #087443; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.dialog-actions .el-button + .el-button { margin-left: 0; }
+/* Element Plus 的弹窗会挂载到 body，通过主题变量同步热力图的深色模式。 */
+:root[data-theme="dark"] {
+  --el-bg-color: #161b22;
+  --el-bg-color-overlay: #161b22;
+  --el-fill-color-blank: #0d1117;
+  --el-fill-color-light: #21262d;
+  --el-text-color-primary: #e6edf3;
+  --el-text-color-regular: #c9d1d9;
+  --el-border-color: #30363d;
+  --el-border-color-light: #30363d;
+}
+@media (max-width: 600px) {
+  body { padding: 16px; }
+  h1 { font-size: 23px; }
+  .panel { padding: 14px; }
+}
+
+/* Shared workspace palette and interaction states. */
+:root {
+  --surface: #fff; --surface-soft: #f4f7fb; --page-bg: #f5f7fb;
+  --ink: #202c40; --muted: #63738a; --line: #e2e8f0; --accent: #3d63dd;
+  --el-color-primary: #3d63dd; --el-color-primary-light-3: #708ce7;
+  --el-color-primary-light-5: #9eafee; --el-color-primary-light-7: #c5d0f5;
+  --el-color-primary-light-8: #d8e0f8; --el-color-primary-light-9: #edf1fd;
+  --el-color-primary-dark-2: #304fb1; --el-border-radius-base: 8px;
+  --el-font-family: inherit;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #161b22; --surface-soft: #1d2530; --page-bg: #0d1117;
+  --ink: #e6edf3; --muted: #a1aec0; --line: #303c4d; --accent: #91adff;
+  --el-color-primary: #91adff; --el-color-primary-light-3: #7188c9;
+  --el-color-primary-light-5: #52648f; --el-color-primary-light-7: #34415b;
+  --el-color-primary-light-8: #283449; --el-color-primary-light-9: #202b3e;
+  --el-color-primary-dark-2: #b2c5ff; --el-text-color-secondary: #a1aec0;
+}
+body { padding: 0 32px; background: var(--page-bg); color: var(--ink); line-height: 1.6; }
+#portal { max-width: 1280px; margin: 0 auto; }
+#portal > .topbar { min-height: 100px; border-bottom: 1px solid var(--line); }
+.portal-brand { display: flex; align-items: center; gap: 13px; }
+.brand-mark { display: block; width: 43px; height: 43px; flex: none; }
+.eyebrow { display: block; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--muted); }
+h1 { font-size: 21px; letter-spacing: -.5px; line-height: 1.4; }
+.panel { border-color: var(--line); border-radius: 16px; background: var(--surface); }
+.repo-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.repo { padding: 20px; transition: border-color .18s, box-shadow .18s, transform .18s; }
+.repo:hover, .repo:focus-within { box-shadow: 0 6px 20px rgb(32 50 85 / 8%); transform: translateY(-2px); }
+.repo-card-link, :root[data-theme="dark"] .repo-card-link { color: var(--ink); }
+.repo-card-link::after { border-radius: 16px; }
+.repo h3 { font-size: 16px; font-weight: 650; }
+.repo-icon { box-sizing: content-box; padding: 9px; border-radius: 10px; background: var(--surface-soft); color: #7b8491; }
+.repo-line + .repo-line { margin-top: 18px; align-items: flex-end; }
+.description { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; line-height: 1.65; min-height: 46px; overflow-wrap: anywhere; }
+.repo .copy-command { height: 32px; background: var(--surface-soft); border-color: var(--line); color: var(--muted); }
+.repository-list-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin: 30px 0 18px; }
+.repository-list-toolbar h2 { margin: 0 0 4px; font-size: 20px; }
+.count-badge { display: inline-block; padding: 1px 8px; margin-left: 6px; border-radius: 6px; background: var(--surface-soft); color: var(--muted); font-size: 12px; vertical-align: middle; }
+.repo-search { max-width: 320px; }
+.repo-search .el-input__wrapper { min-height: 40px; }
+.repo-empty { grid-column: 1 / -1; padding: 44px 20px; text-align: center; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); }
+.repo-empty strong { font-size: 17px; color: var(--ink); }
+.repo-empty p { margin: 8px 0 18px; font-size: 14px; }
+.theme-toggle.el-button { width: 38px; height: 38px; border: 1px solid var(--line); background: var(--surface); }
+.topbar-actions > .el-button + .el-button { margin-left: 0; }
+#open-create { min-height: 38px; }
+.el-dialog { border-radius: 16px; padding: 24px; }
+.el-dialog__header { margin-bottom: 12px; }
+.skip-link { position: fixed; top: -80px; left: 20px; z-index: 3000; padding: 10px 16px; background: var(--surface); color: var(--accent); border-radius: 8px; }
+.skip-link:focus { top: 10px; }
+a:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 650px) {
+  body { padding: 0 16px; }
+  #portal > .topbar { min-height: 82px; gap: 8px; }
+  .portal-brand { gap: 8px; }
+  .brand-mark { width: 34px; height: 34px; }
+  h1 { font-size: 17px; }
+  .eyebrow { font-size: 8px; letter-spacing: 1px; }
+  .topbar-actions { gap: 6px; }
+  #open-create { padding: 8px 10px; }
+  .repository-list-toolbar { align-items: stretch; flex-direction: column; gap: 14px; }
+  .repo-search { max-width: none; }
+  .repo { padding: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+:root[data-theme="dark"] .el-button--primary { --el-button-text-color: #101a30; --el-button-hover-text-color: #101a30; --el-button-active-text-color: #101a30; }
+
+#portal > main { padding: 24px 0 36px; }
+.repo .copy-command { position: relative; z-index: 1; }
+.repo .copy-command:hover, .repo .copy-command:focus-visible { background: var(--el-color-primary-light-9); border-color: var(--line); color: var(--accent); }
+.repo .copy-command:active { background: var(--el-color-primary-light-8); }
